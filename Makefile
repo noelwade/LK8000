@@ -120,7 +120,7 @@ ifeq ($(TARGET_IS_KOBO),y)
 TCPATH		:= arm-unknown-linux-gnueabi-
 MCPU		:= -march=armv7-a -mfpu=neon -mfloat-abi=hard
 else
-TCPATH		:= 
+TCPATH		:=
 endif
 else
 TCPATH		:=arm-mingw32ce-
@@ -209,7 +209,7 @@ endif
 
 ifeq ($(DEBUG),y)
 OUTPUTS 	:= LK8000-$(TARGET)_debug$(SUFFIX)
-OUTPUTS_NS	:= LK8000-$(TARGET)_debug-ns$(SUFFIX)	
+OUTPUTS_NS	:= LK8000-$(TARGET)_debug-ns$(SUFFIX)
 else
 OUTPUTS 	:= LK8000-$(TARGET)$(SUFFIX)
 OUTPUTS_NS	:= LK8000-$(TARGET)-ns$(SUFFIX)
@@ -230,8 +230,8 @@ else
 USE_SDL := y
 GREYSCALE := n
 endif
-	
-CE_DEFS += -DUSE_MEMORY_CANVAS	
+
+CE_DEFS += -DUSE_MEMORY_CANVAS
 
 ifeq ($(USE_SDL),y)
 $(eval $(call pkg-config-library,SDL,sdl))
@@ -263,7 +263,7 @@ else
 CE_DEFS		:=-D_WIN32_WCE=$(CE_VERSION) -D_WIN32_IE=$(CE_VERSION)
 CE_DEFS		+=-DWIN32_PLATFORM_PSPC=$(CE_PLATFORM) -DMSOFT
 # UNIX like ressource work on all plarform, so no need.
-#WIN32_RESSOURCE := y 
+#WIN32_RESSOURCE := y
 endif
 CE_DEFS += -DUSE_GDI
 endif
@@ -313,7 +313,7 @@ endif
 #CPPFLAGS	+= -Wunused-label -Wunused-variable -Wunused-value -Wuninitialized
 
 CPPFLAGS	+= -Wall -Wno-char-subscripts
-#CPPFLAGS	+= -Wall -Wno-char-subscripts -Wignored-qualifiers -Wunsafe-loop-optimizations 
+#CPPFLAGS	+= -Wall -Wno-char-subscripts -Wignored-qualifiers -Wunsafe-loop-optimizations
 #CPPFLAGS	+= -Winit-self -Wswitch -Wcast-qual -Wcast-align
 #CPPFLAGS	+= -Wall -Wno-non-virtual-dtor
 #CPPFLAGS	+= -Wno-char-subscripts -Wno-switch
@@ -375,7 +375,7 @@ LDFLAGS		+=$(PROFILE) -Wl,-Map=output.map
 
 ifeq ($(CONFIG_LINUX),y)
   LDLIBS += -lstdc++ -pthread -march=native -lpng -ljpeg -lrt -lm $(FREETYPE_LDLIBS)  $(ZZIP_LDLIBS)
-  
+
   ifeq ($(USE_SDL), y)
     LDLIBS += $(SDL_LDLIBS)
   endif
@@ -390,9 +390,9 @@ else
     LDLIBS		+= -lws2
   endif
   ifeq ($(MINIMAL),n)
-    LDLIBS		+= -laygshell 
+    LDLIBS		+= -laygshell
     ifneq ($(TARGET),PNA)
-      LDLIBS		+= -limgdecmp 
+      LDLIBS		+= -limgdecmp
     endif
   endif
 endif
@@ -475,9 +475,9 @@ WINDOW += \
 	$(SRC)/OS/Win/CpuLoad.cpp \
 	$(SRC)/OS/Win/Memory.cpp \
 	$(SRC)/OS/Win/RotateScreen.cpp\
-	
+
 endif
-	
+
 SCREEN := \
 	$(SRC_SCREEN)/LKColor.cpp \
 	$(SRC_SCREEN)/LKPen.cpp \
@@ -486,7 +486,7 @@ SCREEN := \
 	$(SRC_SCREEN)/LKSurface.cpp \
 	$(SRC_SCREEN)/LKWindowSurface.cpp \
 	$(SRC_SCREEN)/LKBitmapSurface.cpp \
-	
+
 LIBRARY	:=\
 	$(LIB)/bsearch.cpp \
 	$(LIB)/Crc.cpp\
@@ -809,8 +809,9 @@ DEVS	:=\
 	$(DEV)/LKRoyaltek3200.cpp	\
 	$(DEV)/devFlyNet.cpp \
 	$(DEV)/devCProbe.cpp \
-	$(DEV)/devBlueFlyVario.cpp
-		
+	$(DEV)/devBlueFlyVario.cpp \
+	$(DEV)/devCNVario.cpp
+
 
 VOLKS	:=\
 	$(DEV)/Volkslogger/dbbconv.cpp \
@@ -895,7 +896,7 @@ DLGS	:=\
 	$(DLG)/dlgBluetooth.cpp\
 	$(DLG)/dlgIgcFile.cpp\
 	$(DLG)/dlgProgress.cpp \
-	
+
 SRC_FILES :=\
 	$(WINDOW) \
 	$(SCREEN) \
@@ -1081,14 +1082,14 @@ endif
 
 OBJS 	:=\
 	$(patsubst $(SRC)%.cpp,$(BIN)%.o,$(SRC_FILES)) \
-	$(BIN)/poco.a 
-	
-ifneq ($(WIN32_RESSOURCE), y)	
+	$(BIN)/poco.a
+
+ifneq ($(WIN32_RESSOURCE), y)
 OBJS	+= $(BIN)/resource.a
 endif
 
 ifneq ($(CONFIG_LINUX),y)
-OBJS	+= $(BIN)/zzip.a 
+OBJS	+= $(BIN)/zzip.a
 OBJS	+= $(BIN)/compat.a
 OBJS	+= $(BIN)/lk8000.rsc
 endif
@@ -1110,7 +1111,7 @@ cxx-flags	=$(DEPFLAGS) $(CXXFLAGS) $(CPPFLAGS) $(CPPFLAGS_$(dirtarget)) $(TARGET
 
 all:	$(PNG) $(MASKED_PNG) $(OUTPUTS)
 	@$(NQ)echo "GCCVERSION : $(GCCVERSION)"
-	
+
 rebuild:
 	@$(MAKE) clean
 	@$(MAKE) all
@@ -1130,11 +1131,11 @@ tags:
 	$(Q)$(ETAGS) --declarations --output=TAGS `find . -name *\\\.[ch] -or -name *\\\.cpp`
 	$(Q)$(EBROWSE) -s `find . -name *\\\.[ch] -or -name *\\\.cpp`
 
-cppcheck : 
+cppcheck :
 	$(Q)cppcheck --force --enable=all -q -j4 $(SRC_FILES)
 #	$(Q)cppcheck --force --enable=warning -q -j4 $(ZZIPSRC)
 #	$(Q)cppcheck --force --enable=warning -q -j4 $(COMPAT)
-	
+
 
 #
 # Useful debugging targets - make preprocessed versions of the source
@@ -1152,7 +1153,7 @@ cppcheck :
 
 ####### rules
 
-$(OUTPUTS) : $(OUTPUTS_NS) 
+$(OUTPUTS) : $(OUTPUTS_NS)
 	@$(NQ)echo "  STRIP   $@"
 	$(Q)$(STRIP) $< -o $@
 	$(Q)$(SIZE) $@
@@ -1193,7 +1194,7 @@ $(BIN)/%.o: $(SRC)/%.cpp
 	$(Q)$(CXX) $(cxx-flags) -c $(OUTPUT_OPTION) $<
 	@sed -i '1s,^[^ :]*,$@,' $(DEPFILE)
 
-$(BIN)/resource.a: $(BIN)/Resource/resource_data.o $(BIN)/Resource/resource_xml.o $(BITMAP_RES_O) 
+$(BIN)/resource.a: $(BIN)/Resource/resource_data.o $(BIN)/Resource/resource_xml.o $(BITMAP_RES_O)
 	@$(NQ)echo "  AR      $@"
 	$(Q)$(AR) $(ARFLAGS) $@ $^
 
@@ -1220,7 +1221,7 @@ $(BIN)/Resource/resource_xml.min.S :  $(RSCSRC)/resource_xml.S $(patsubst Common
 	@$(NQ)echo "  update $@"
 	@sed -r 's|(^.*")\.\./\.\./(Data/Dialogs[^"]+)(.xml".*)$$|\1\.\./\.\./\.\./$(BIN)/\2.min\3|g' $< > $@
 
-$(BIN)/%.rsc: $(BIN)/%.min.rc 
+$(BIN)/%.rsc: $(BIN)/%.min.rc
 	@$(NQ)echo "  WINDRES $@"
 	$(Q)$(WINDRES) $(WINDRESFLAGS) $< $@
 

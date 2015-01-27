@@ -2,7 +2,7 @@
 #ifndef	DEVICE_H
 #define	DEVICE_H
 
-#include "MapWindow.h" 
+#include "MapWindow.h"
 #include "ComPort.h"
 #include "BtHandler.h"
 #include <vector>
@@ -10,7 +10,7 @@
 
 #define DEVNAMESIZE  32
 #define	NUMDEV		 2
-#define	NUMREGDEV	 34 // Max number of registered devices
+#define	NUMREGDEV	 35 // Max number of registered devices
 
 #define	devA()	    (&DeviceList[0])
 #define	devB()	    (&DeviceList[1])
@@ -18,26 +18,26 @@
 
 class COMMPortItem_t {
 public:
-    inline COMMPortItem_t(const TCHAR* szName, const TCHAR* szLabel =_T("")) { 
+    inline COMMPortItem_t(const TCHAR* szName, const TCHAR* szLabel =_T("")) {
 		_sName = szName;
 		_sLabel = szLabel;
 	}
 #ifndef NO_BLUETOOTH
-    inline COMMPortItem_t(const CBtDevice* pDev) : _sName(pDev->BTPortName()), _sLabel() { 
+    inline COMMPortItem_t(const CBtDevice* pDev) : _sName(pDev->BTPortName()), _sLabel() {
         _sLabel = _T("BT:") + pDev->GetName();
     }
-    
-    inline COMMPortItem_t& operator=(const CBtDevice* pDev) { 
+
+    inline COMMPortItem_t& operator=(const CBtDevice* pDev) {
         _sName = pDev->BTPortName();
         _sLabel = _T("BT:") + pDev->GetName();
         return (*this);
     }
  #endif
-    inline bool IsSamePort(const TCHAR* szName) const { return _sName == szName; } 
-    
+    inline bool IsSamePort(const TCHAR* szName) const { return _sName == szName; }
+
     inline const TCHAR* GetName() const { return _sName.c_str(); }
     inline const TCHAR* GetLabel() const { return _sLabel.empty()?_sName.c_str():_sLabel.c_str(); }
-    
+
 protected:
     std::tstring _sName;
     std::tstring _sLabel;
@@ -58,7 +58,7 @@ typedef struct Declaration {
 } Declaration_t;
 
 typedef	struct DeviceDescriptor_t{
-  int	Port;	 
+  int	Port;
   ComPort *Com;
   TCHAR	Name[DEVNAMESIZE+1];
 
@@ -87,7 +87,7 @@ typedef	struct DeviceDescriptor_t{
 
   int PortNumber;
   bool Disabled;
-  
+
   void InitStruct(int i);
 }DeviceDescriptor_t;
 

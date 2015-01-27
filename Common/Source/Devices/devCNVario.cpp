@@ -2,7 +2,7 @@
    LK8000 Tactical Flight Computer -  WWW.LK8000.IT
    Released under GNU/GPL License v.2
    See CREDITS.TXT file for authors and copyrights
-   $Id: devCNVARIO.cpp,v 1.0 2015/01/20 10:00:00 root Exp root $
+   $Id: devCNVario.cpp,v 1.1 2015/01/25 19:07:00 root Exp root $
 */
 
 
@@ -14,7 +14,7 @@
 #include "externs.h"
 #include "McReady.h"
 
-#include "devCNVARIO.h"
+#include "devCNVario.h"
 
 extern bool UpdateBaroSource(NMEA_INFO* pGPS, const short parserid, const PDeviceDescriptor_t d, const double fAlt);
 extern bool UpdateQNH(const double newqnh);
@@ -107,7 +107,7 @@ static BOOL cnv_w(PDeviceDescriptor_t d, TCHAR *String, NMEA_INFO *pGPS);
 static BOOL cai_PCAIB(TCHAR *String, NMEA_INFO *pGPS);
 static BOOL cai_PCAID(PDeviceDescriptor_t d,TCHAR *String, NMEA_INFO *pGPS);
 */
-static BOOL cnVarioInstall(PDeviceDescriptor_t d); 
+static BOOL cnVarioInstall(PDeviceDescriptor_t d);
 
 static int  MacCreadyUpdateTimeout = 0;
 static int  BugsUpdateTimeout = 0;
@@ -115,11 +115,11 @@ static int  BallastUpdateTimeout = 0;
 
 
 BOOL cnVarioParseNMEA(PDeviceDescriptor_t d, TCHAR *String, NMEA_INFO *pGPS){
-  
+
   if (!NMEAParser::NMEAChecksum(String) || (pGPS == NULL)){
     return FALSE;
   }
-  
+
   /* LEGACY CAI302 ITEMS. NOT SUPPORTED BY CNVario
   if(_tcsstr(String,TEXT("$PCAIB")) == String){
     return cai_PCAIB(&String[7], pGPS);
@@ -192,11 +192,11 @@ void test(void){
   int   retries;
   HKEY hKey = NULL;
   Buffer[0] = '\0';
-  if (RegOpenKeyEx(HKEY_LOCAL_MACHINE , 
-      TEXT("\\Software\\Microsoft\\Today\\Items\\XCSoar"), 
+  if (RegOpenKeyEx(HKEY_LOCAL_MACHINE ,
+      TEXT("\\Software\\Microsoft\\Today\\Items\\XCSoar"),
       0, 0, &hKey
     ) == ERROR_SUCCESS){
-    if (RegQueryValueEx(hKey , 
+    if (RegQueryValueEx(hKey ,
         TEXT("DLL"),
         NULL,
         &KeyType,
@@ -204,11 +204,11 @@ void test(void){
         &BufSize
       ) == ERROR_SUCCESS){
     }
-    else Buffer[0] = '\0'; 
+    else Buffer[0] = '\0';
     RegCloseKey(hKey);
     if (Buffer[0] != '\0'){
-      RegDeleteKey(HKEY_LOCAL_MACHINE, 
-                   TEXT("\\Software\\Microsoft\\Today\\Items\\XCSoar")); 
+      RegDeleteKey(HKEY_LOCAL_MACHINE,
+                   TEXT("\\Software\\Microsoft\\Today\\Items\\XCSoar"));
       for (retries=0; retries < 10 && DeleteFile(Buffer) == 0; retries++){
         SendMessage(HWND_BROADCAST, WM_WININICHANGE, 0xF2, 0);
         Poco::Thread::sleep(250*retries);
@@ -229,7 +229,7 @@ BOOL cnVarioOpen(PDeviceDescriptor_t d, int Port){
     d->Com->WriteString(TEXT("LOG 0\r"));
   }
   */
-  
+
   return(TRUE);
 }
 
@@ -240,7 +240,7 @@ BOOL cnVarioClose(PDeviceDescriptor_t d){
 
 /* UNUSED DECLARATION & LOGGER CODE (LEGACY CAI302 FUNCTIONS)
 static int DeclIndex = 128;
-static int nDeclErrorCode; 
+static int nDeclErrorCode;
 
 
 BOOL cai302DeclAddWayPoint(PDeviceDescriptor_t d, const WAYPOINT *wp);
@@ -278,7 +278,7 @@ BOOL cai302Declare(PDeviceDescriptor_t d, Declaration_t *decl, unsigned errBuffe
   d->Com->WriteString(TEXT("O\r"));
   Poco::Thread::sleep(500); // some params come up 0 if we don't wait!
   d->Com->Read(&cai302_OdataNoArgs, sizeof(cai302_OdataNoArgs));
-  
+
   if (!ExpectString(d, TEXT("up>"))){
     nDeclErrorCode = 1;
     return(FALSE);
@@ -409,14 +409,14 @@ BOOL cai302DeclAddWayPoint(PDeviceDescriptor_t d, const WAYPOINT *wp){
     return(FALSE);
 
   LK_tcsncpy(Name, wp->Name, 12);
-  
+
   DegLat = (int)wp->Latitude;
   MinLat = wp->Latitude - DegLat;
   NoS = 'N';
   if(MinLat<0)
     {
       NoS = 'S';
-      DegLat *= -1; 
+      DegLat *= -1;
       MinLat *= -1;
     }
   MinLat *= 60;
@@ -428,15 +428,15 @@ BOOL cai302DeclAddWayPoint(PDeviceDescriptor_t d, const WAYPOINT *wp){
   if(MinLon<0)
     {
       EoW = 'W';
-      DegLon *= -1; 
+      DegLon *= -1;
       MinLon *= -1;
     }
   MinLon *=60;
 
-  _stprintf(szTmp, TEXT("D,%d,%02d%07.4f%c,%03d%07.4f%c,%s,%d\r"), 
+  _stprintf(szTmp, TEXT("D,%d,%02d%07.4f%c,%03d%07.4f%c,%s,%d\r"),
     DeclIndex,
-    DegLat, MinLat, NoS, 
-    DegLon, MinLon, EoW, 
+    DegLat, MinLat, NoS,
+    DegLon, MinLon, EoW,
     Name,
     (int)wp->Altitude
   );
@@ -457,7 +457,7 @@ BOOL cai302DeclAddWayPoint(PDeviceDescriptor_t d, const WAYPOINT *wp){
 
 BOOL cnVarioIsLogger(PDeviceDescriptor_t d){
 	 (void)d;
-  return(TRUE);
+  return(FALSE);
 }
 
 BOOL cnVarioIsGPSSource(PDeviceDescriptor_t d){
@@ -493,7 +493,7 @@ BOOL cnVarioInstall(PDeviceDescriptor_t d){
 
 BOOL cnVarioRegister(void){
   return(devRegister(
-    TEXT("CN Vario(XC)"), 
+    TEXT("CNVario (XC)"),
     (1l << dfGPS)
       | (1l << dfLogger)
       | (1l << dfSpeed)
@@ -537,7 +537,7 @@ BOOL cai_PCAID(PDeviceDescriptor_t d, TCHAR *String, NMEA_INFO *pGPS){
       waitinit--;
       return TRUE;
   }
-      
+
 
   NMEAParser::ExtractParameter(String,ctemp,1);
   // This is in conflict with !w sentence providing true altitude and the relative QNH.
@@ -575,7 +575,7 @@ BOOL cai_PCAID(PDeviceDescriptor_t d, TCHAR *String, NMEA_INFO *pGPS){
 BOOL cnv_w(PDeviceDescriptor_t d, TCHAR *String, NMEA_INFO *pGPS){
 
   TCHAR ctemp[80];
-  
+
   NMEAParser::ExtractParameter(String,ctemp,1);
   pGPS->ExternalWindAvailable = TRUE;
   pGPS->ExternalWindSpeed = (StrToDouble(ctemp,NULL) / 10.0);
@@ -608,8 +608,8 @@ BOOL cnv_w(PDeviceDescriptor_t d, TCHAR *String, NMEA_INFO *pGPS){
   pGPS->TrueAirspeed = (StrToDouble(ctemp,NULL) / 100.0);
   // if qnhalt is zero, IAS is the TAS, more or less, so no problems
   pGPS->IndicatedAirspeed = pGPS->TrueAirspeed / AirDensityRatio(AltitudeToQNEAltitude(qnhalt));
- 
- 
+
+
   NMEAParser::ExtractParameter(String,ctemp,7);
   pGPS->VarioAvailable = TRUE;
   pGPS->Vario = ((StrToDouble(ctemp,NULL) - 200.0) / 10.0) * KNOTSTOMETRESSECONDS;
@@ -619,13 +619,13 @@ BOOL cnv_w(PDeviceDescriptor_t d, TCHAR *String, NMEA_INFO *pGPS){
   if (MacCreadyUpdateTimeout <= 0)
     CheckSetMACCREADY(pGPS->MacReady);
   else
-    MacCreadyUpdateTimeout--; 
+    MacCreadyUpdateTimeout--;
 
   NMEAParser::ExtractParameter(String,ctemp,11);
   pGPS->Ballast = StrToDouble(ctemp,NULL) / 100.0;
   if (BallastUpdateTimeout <= 0)
     CheckSetBallast(pGPS->Ballast);
-  else 
+  else
     BallastUpdateTimeout--;
 
 
@@ -633,7 +633,7 @@ BOOL cnv_w(PDeviceDescriptor_t d, TCHAR *String, NMEA_INFO *pGPS){
   pGPS->Bugs = StrToDouble(ctemp,NULL) / 100.0;
   if (BugsUpdateTimeout <= 0)
     CheckSetBugs(pGPS->Bugs);
-  else 
+  else
     BugsUpdateTimeout--;
 
   TriggerVarioUpdate();

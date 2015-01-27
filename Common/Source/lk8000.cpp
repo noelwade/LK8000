@@ -56,7 +56,7 @@
 #include "devCProbe.h"
 #include "devBlueFlyVario.h"
 #include "devLXV7easy.h"
-
+#include "devCNVario.h"
 
 #include "TraceThread.h"
 #include "Poco/NamedEvent.h"
@@ -103,10 +103,10 @@ void handler(int /*signal*/) {
 //
 // -1	for init instance error
 // -2	for mutex error return
-// 
+//
 //  111 for normal program termination with automatic relaunch, if using lkrun
 //  222 for normal program termination, with request to quit lkrun if running
-// 
+//
 //  259 is reserved by OS (STILL_ACTIVE) status
 #ifdef WIN32
 HINSTANCE _hInstance;
@@ -124,10 +124,10 @@ int WINAPI WinMain(     HINSTANCE hInstance,
 #endif
 {
     (void)hPrevInstance;
-    
+
     _hInstance = hInstance; // this need to be first, always !
     const TCHAR* szCmdLine = GetCommandLine();
-    
+
 #else
 int main() {
     const char * szCmdLine = "";
@@ -154,7 +154,7 @@ int main() {
 
   ScreenGlobalInit InitScreen;
 
-        
+
   bool realexitforced=false;
 
   LKSound(_T("LK_CONNECT.WAV"));
@@ -181,9 +181,9 @@ int main() {
       StartupStore(TEXT(". Built with MSVC ver : %d %s"), _MSC_VER, NEWLINE);
     #endif
     #ifdef __MINGW32__
-      StartupStore(TEXT(". Built with mingw32 %d.%d (GCC %d.%d.%d) %s"), 
-              __MINGW32_MAJOR_VERSION, __MINGW32_MINOR_VERSION, 
-              __GNUC__, __GNUC_MINOR__, __GNUC_PATCHLEVEL__, 
+      StartupStore(TEXT(". Built with mingw32 %d.%d (GCC %d.%d.%d) %s"),
+              __MINGW32_MAJOR_VERSION, __MINGW32_MINOR_VERSION,
+              __GNUC__, __GNUC_MINOR__, __GNUC_PATCHLEVEL__,
               NEWLINE);
     #endif
   StartupStore(TEXT(". TESTBENCH option enabled%s"),NEWLINE);
@@ -196,7 +196,7 @@ int main() {
   LKRunStartEnd(true);
   // END OF PRELOAD, PROGRAM GO!
 
-  #ifdef PNA 
+  #ifdef PNA
     // At this point we still havent loaded profile. Loading profile will also reload registry.
     // If registry was deleted in PNA, model type is not configured. It is configured in profile, but
     // it is too early here. So no ModelType .
@@ -207,7 +207,7 @@ int main() {
         LoadModelFromProfile();
     }
   #endif
-  
+
   bool datadir;
   datadir=CheckDataDir();
 
@@ -228,7 +228,7 @@ int main() {
   StartupStore(TEXT(". Install/copy system objects in device memory%s"),NEWLINE);
   #endif
   short didsystem;
-  didsystem=InstallSystem(); 
+  didsystem=InstallSystem();
   goInstallSystem=true;
   #if TESTBENCH
   StartupStore(_T(". InstallSystem ended, code=%d%s"),didsystem,NEWLINE);
@@ -311,7 +311,7 @@ int main() {
   GPS_INFO.Day = pda_time->tm_mday;
   GPS_INFO.Hour  = pda_time->tm_hour;
   GPS_INFO.Minute = pda_time->tm_min;
-  GPS_INFO.Second = pda_time->tm_sec;  
+  GPS_INFO.Second = pda_time->tm_sec;
 
   CalculateNewPolarCoef();
   #if TESTBENCH
@@ -323,7 +323,7 @@ int main() {
 #ifdef PNA // VENTA-ADDON
     TCHAR sTmp[250];
 	_stprintf(sTmp, TEXT("PNA MODEL=%s (%d)"), GlobalModelName, GlobalModelType);
-	CreateProgressDialog(sTmp); 
+	CreateProgressDialog(sTmp);
 #else
   TCHAR sTmpA[MAX_PATH], sTmpB[MAX_PATH];
   LocalPath(sTmpA,_T(""));
@@ -335,7 +335,7 @@ int main() {
   }
 #endif
   _stprintf(sTmpB, TEXT("Conf=%s"),sTmpA);
-  CreateProgressDialog(sTmpB); 
+  CreateProgressDialog(sTmpB);
 #if ( WINDOWSPC==0 )
   if ( !datadir ) {
     Poco::Thread::sleep(3000);
@@ -359,7 +359,7 @@ int main() {
     }
 
 #ifdef PNA
-  if ( SetBacklight() == true ) 
+  if ( SetBacklight() == true )
 	// LKTOKEN _@M1212_ "AUTOMATIC BACKLIGHT CONTROL"
 	CreateProgressDialog(gettext(TEXT("_@M1212_")));
   else
@@ -367,7 +367,7 @@ int main() {
 	CreateProgressDialog(gettext(TEXT("_@M1213_")));
 
   // this should work ok for all pdas as well
-  if ( SetSoundVolume() == true ) 
+  if ( SetSoundVolume() == true )
 	// LKTOKEN _@M1214_ "AUTOMATIC SOUND LEVEL CONTROL"
 	CreateProgressDialog(gettext(TEXT("_@M1214_")));
   else
@@ -379,7 +379,7 @@ int main() {
 
   ReadWayPoints();
   StartupStore(_T(". LOADED %d WAYPOINTS + %d virtuals%s"),WayPointList.size()-NUMRESWP,NUMRESWP,NEWLINE);
-  InitLDRotary(&rotaryLD); 
+  InitLDRotary(&rotaryLD);
   InitWindRotary(&rotaryWind); // 100103
   MapWindow::zoom.Reset();
   InitLK8000();
@@ -388,7 +388,7 @@ int main() {
   LKReadLanguageFile(szLanguageFile);
   LKLanguageReady=true;
 
-  RasterTerrain::ServiceFullReload(GPS_INFO.Latitude, 
+  RasterTerrain::ServiceFullReload(GPS_INFO.Latitude,
                                    GPS_INFO.Longitude);
 
   CAirspaceManager::Instance().ReadAirspaces();
@@ -447,10 +447,11 @@ int main() {
   CDevCProbe::Register();
   BlueFlyRegister();
   LXV7easyRegister();
+  cnVarioRegister();
   // REPETITION REMINDER ..
   // IMPORTANT: ADD NEW ONES TO BOTTOM OF THIS LIST
   // >>> Please check that the number of devices is not exceeding NUMREGDEV in device.h <<<
-  // or you get an assertion error in device.cpp 
+  // or you get an assertion error in device.cpp
 
 // WINDOWSPC _SIM_ devInit called twice missing devA name
 // on PC nonSIM we cannot use devInit here! Generic device is used until next port reset!
@@ -458,12 +459,12 @@ int main() {
 #if 110530
   // we need devInit for all devices. Missing initialization otherwise.
   LockComm();
-  devInit(TEXT("")); 
+  devInit(TEXT(""));
   UnlockComm();
 #else
   // I dont remember anymore WHY! Probably it has been fixed already! paolo
   #if (WINDOWSPC>0)
-  if (SIMMODE) devInit(TEXT(""));      
+  if (SIMMODE) devInit(TEXT(""));
   #endif
 #endif
 
@@ -575,7 +576,7 @@ void CleanupForShutdown(void) {
   MainWindow.Destroy();
   Message::Destroy();
 
-  DeInitialiseFonts();  
+  DeInitialiseFonts();
   LKObjects_Delete();
   LKUnloadProfileBitmaps();
   LKUnloadFixedBitmaps();
@@ -584,7 +585,7 @@ void CleanupForShutdown(void) {
   InputEvents::UnloadString();
   // This is freeing char *slot in TextInBox
   MapWindow::FreeSlot();
-  
+
   Mutex.unlock();
 }
 
