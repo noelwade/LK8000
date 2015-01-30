@@ -654,7 +654,8 @@ DEVS	:=\
 	$(DEV)/LKRoyaltek3200.cpp	\
 	$(DEV)/devFlyNet.cpp \
 	$(DEV)/devCProbe.cpp \
-	$(DEV)/devBlueFlyVario.cpp
+	$(DEV)/devBlueFlyVario.cpp \
+	$(DEV)/devCNVario.cpp
 		
 
 VOLKS	:=\
