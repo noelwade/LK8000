@@ -53,6 +53,7 @@
 #include "devEye.h"
 #include "devWesterboer.h"
 #include "devFlyNet.h"
+#include "devCNVario.h"
 #include "InputEvents.h"
 #include "Geoid.h"
 #include "RasterTerrain.h"
